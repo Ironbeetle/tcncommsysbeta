@@ -1,0 +1,123 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["fnmemberlist", "msgmanager"]
+}
+
+model fnmember {
+  id             String      @id @default(uuid())
+  created        DateTime    @default(now())
+  updated        DateTime    @default(now()) @updatedAt
+  birthdate      DateTime    @db.Date
+  first_name     String
+  last_name      String
+  t_number       String
+  gender         String
+  o_r_status     String      @default("onreserve")
+  community      String
+  contact_number String
+  option         String      @default("none")
+  email          String?     @unique
+  barcode        Barcode[]
+  household      Household[]
+
+  @@schema("fnmemberlist")
+}
+
+model Barcode {
+  id         String   @id @default(uuid())
+  created    DateTime @default(now())
+  updated    DateTime @default(now()) @updatedAt
+  barcode    String   @default("0110")
+  fnmemberId String
+  fnmember   fnmember @relation(fields: [fnmemberId], references: [id], onDelete: Cascade)
+
+  @@schema("fnmemberlist")
+}
+
+model Household {
+  id          String   @id @default(uuid())
+  created     DateTime @default(now())
+  updated     DateTime @default(now()) @updatedAt
+  housenumber String   @default("0")
+  fnmemberId  String
+  fnmember    fnmember @relation(fields: [fnmemberId], references: [id], onDelete: Cascade)
+
+  @@schema("fnmemberlist")
+}
+
+model User {
+  id         String      @id @default(cuid())
+  email      String      @unique
+  first_name String
+  last_name  String
+  created    DateTime    @default(now())
+  department String      @default("admin")
+  emails     EmailLog[]
+  MsgApiLog  MsgApiLog[]
+  sessions   Session[]
+  smslog     SmsLog[]
+
+  @@schema("msgmanager")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  created      DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@schema("msgmanager")
+}
+
+model SmsLog {
+  id         String   @id @default(uuid())
+  created    DateTime @default(now())
+  message    String
+  recipients String[]
+  status     String
+  messageIds String[]
+  error      String?
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@schema("msgmanager")
+}
+
+model EmailLog {
+  id          String   @id @default(uuid())
+  created     DateTime @default(now())
+  subject     String
+  message     String
+  recipients  String[]
+  status      String
+  messageId   String?
+  error       String?
+  attachments Json?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@schema("msgmanager")
+}
+
+model MsgApiLog {
+  id          String    @id
+  title       String
+  content     String
+  priority    String
+  type        String    @default("web")
+  created     DateTime  @default(now())
+  expiryDate  DateTime?
+  isPublished Boolean   @default(false)
+  userId      String
+  User        User      @relation(fields: [userId], references: [id])
+
+  @@schema("msgmanager")
+}
