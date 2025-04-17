@@ -34,27 +34,27 @@ export default function Page() {
   }
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center" style={{backgroundColor:"rgb(77, 107, 8)"}}>
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-lg">
+    <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-br from-deep-blue via-primary-blue to-secondary-blue">
+      <div className="w-full max-w-md p-8 space-y-8 glass-container">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900">
+          <h2 className="text-3xl font-bold text-text-light">
             Welcome Back
           </h2>
-          <p className="mt-2 text-lg text-gray-600">
+          <p className="mt-2 text-lg text-text-muted">
             Please sign in to continue
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">
+            <div className="p-3 text-sm text-red-500 bg-red-500/10 backdrop-blur-sm rounded-md">
               {error}
             </div>
           )}
 
           <div className="space-y-2">
             <label htmlFor="email" 
-                   className="block text-sm font-medium text-gray-100">
+                   className="block text-sm font-medium text-text-light">
               Email
             </label>
             <input
@@ -67,8 +67,11 @@ export default function Page() {
                 email: e.target.value
               }))}
               className={cn(
-                "w-full px-3 py-2 border rounded-md",
-                "focus:outline-none focus:ring-2 focus:ring-blue-500",
+                "w-full px-3 py-2 rounded-md",
+                "bg-surface backdrop-blur-md",
+                "border border-white/10",
+                "text-text-light placeholder-text-muted",
+                "focus:outline-none focus:ring-2 focus:ring-accent-blue",
                 "disabled:opacity-50 disabled:cursor-not-allowed"
               )}
               disabled={isPending}
@@ -78,7 +81,7 @@ export default function Page() {
 
           <div className="space-y-2">
             <label htmlFor="department" 
-                   className="block text-sm font-medium text-gray-700">
+                   className="block text-sm font-medium text-text-light">
               Department
             </label>
             <select
@@ -90,8 +93,11 @@ export default function Page() {
                 department: e.target.value
               }))}
               className={cn(
-                "w-full px-3 py-2 border rounded-md",
-                "focus:outline-none focus:ring-2 focus:ring-blue-500",
+                "w-full px-3 py-2 rounded-md",
+                "bg-surface backdrop-blur-md",
+                "border border-white/10",
+                "text-text-light",
+                "focus:outline-none focus:ring-2 focus:ring-accent-blue",
                 "disabled:opacity-50 disabled:cursor-not-allowed"
               )}
               disabled={isPending}
@@ -104,12 +110,16 @@ export default function Page() {
 
           <Button
             type="submit"
-            className="w-full"
+            className={cn(
+              "w-full",
+              "bg-accent-blue hover:bg-accent-blue/80",
+              "text-text-light"
+            )}
             disabled={isPending}
           >
             {isPending ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-text-light" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>

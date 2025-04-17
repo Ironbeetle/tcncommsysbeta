@@ -67,7 +67,7 @@ export default function StaffPortal() {
   }, [router]);
 
   return (
-    <div className="w-screen h-screen" style={{backgroundColor:"rgb(77, 107, 8)"}}>
+    <div className="w-screen h-screen bg-gradient-to-br from-deep-blue via-primary-blue to-secondary-blue">
       <div className="flex flex-row justify-evenly h-1/8 w-full border-b-2 border-white border-solid">
         <div className="grid grid-cols-7 w-full h-full">
           <div className="col-span-1 h-full">
@@ -78,13 +78,22 @@ export default function StaffPortal() {
           <div className="col-span-3 apptext h-full flex flex-col justify-center items-center">
             Welcome {user ? `${(user as { first_name: string; last_name: string }).first_name} ${(user as { first_name: string; last_name: string }).last_name}` : 'Admin User'}
           </div>
-          <div className="col-span-3 h-full flex flex-col justify-center items-center apptext"> 
+          <div className="col-span-2 h-full flex flex-col justify-center items-center apptext"> 
             {new Date().toLocaleDateString('en-US', {
               weekday: 'long',
               year: 'numeric',
               month: 'short',
               day: 'numeric'
             })}
+          </div>
+          <div className="col-span-1 h-full flex flex-col justify-center items-center">
+            <Button 
+              variant="destructive"
+              onClick={handleLogout}
+              className="w-3/4"
+            >
+              Logout
+            </Button>
           </div>
         </div>
       </div>

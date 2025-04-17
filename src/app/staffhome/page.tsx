@@ -12,7 +12,7 @@ export default function Home() {
   const { user, handleLogout } = useSession();
 
   return (
-    <div className="w-screen h-screen" style={{backgroundColor:"rgb(77, 107, 8)"}}>
+    <div className="w-screen h-screen bg-gradient-to-br from-deep-blue via-primary-blue to-secondary-blue">
       <div className="flex flex-row justify-evenly h-1/8 w-full border-b-2 border-white border-solid">
         <div className="grid grid-cols-7 w-full h-full">
           <div className="col-span-1 h-full">

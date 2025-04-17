@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -15,11 +15,7 @@ export function useSession(inactivityTimeout = 1800000) { // 30 minutes default
   const [lastActivity, setLastActivity] = useState<number>(Date.now());
   const router = useRouter();
 
-  const updateActivity = () => {
-    setLastActivity(Date.now());
-  };
-
-  const checkSession = async () => {
+  const checkSession = useCallback(async () => {
     try {
       const response = await fetch('/api/auth/session');
       const data = await response.json();
@@ -36,57 +32,56 @@ export function useSession(inactivityTimeout = 1800000) { // 30 minutes default
       console.error('Session check failed:', error);
       return false;
     }
-  };
+  }, [router]);
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST'
-      });
-      
-      if (!response.ok) {
-        throw new Error('Logout failed');
-      }
+  const handleLogout = useCallback(async () => {
+    setUser(null);
+    router.push('/');
+  }, [router]);
 
-      setUser(null);
-      toast.success('Logged out successfully');
-      router.push('/');
-    } catch (error) {
-      console.error('Logout failed:', error);
-      toast.error('Failed to logout');
+  // Throttled activity update
+  const updateActivity = useCallback(() => {
+    const now = Date.now();
+    if (now - lastActivity >= 300000) { // Only update if 5 minutes have passed
+      setLastActivity(now);
     }
-  };
+  }, [lastActivity]);
 
   useEffect(() => {
-    // Check session on mount
+    // Initial session check
     checkSession();
 
-    // Set up activity listeners
+    // Set up activity listeners with a debounced handler
+    let activityTimeout: NodeJS.Timeout;
+    const handleActivity = () => {
+      clearTimeout(activityTimeout);
+      activityTimeout = setTimeout(updateActivity, 1000); // Debounce for 1 second
+    };
+
     const events = ['mousedown', 'keydown', 'scroll', 'mousemove', 'touchstart'];
     events.forEach(event => {
-      document.addEventListener(event, updateActivity);
+      document.addEventListener(event, handleActivity, { passive: true });
     });
 
-    // Set up interval to check session
-    const interval = setInterval(() => {
+    // Check session every 5 minutes
+    const sessionInterval = setInterval(() => {
       const now = Date.now();
-      const timeSinceLastActivity = now - lastActivity;
-
-      if (timeSinceLastActivity >= inactivityTimeout) {
+      if (now - lastActivity >= inactivityTimeout) {
         handleLogout();
         toast.info('Session expired due to inactivity');
       } else {
         checkSession();
       }
-    }, 60000); // Check every minute
+    }, 300000); // Check every 5 minutes
 
     return () => {
       events.forEach(event => {
-        document.removeEventListener(event, updateActivity);
+        document.removeEventListener(event, handleActivity);
       });
-      clearInterval(interval);
+      clearInterval(sessionInterval);
+      clearTimeout(activityTimeout);
     };
-  }, [lastActivity, inactivityTimeout]);
+  }, [checkSession, handleLogout, updateActivity, lastActivity, inactivityTimeout]);
 
   return { user, handleLogout };
 }
