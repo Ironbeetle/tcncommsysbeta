@@ -146,10 +146,65 @@ export default function MessageLogs() {
   return (
     <div className="w-full p-4">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="w-full justify-start">
-          <TabsTrigger value="sms">SMS Logs</TabsTrigger>
-          <TabsTrigger value="email">Email Logs</TabsTrigger>
-          <TabsTrigger value="webapi">Web API Logs</TabsTrigger>
+        <TabsList className="w-full justify-start gap-2 bg-background/50 p-1">
+          <TabsTrigger 
+            value="sms"
+            className="flex items-center gap-2 data-[state=active]:bg-accent-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:scale-105 transition-all duration-200"
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            SMS Logs
+          </TabsTrigger>
+          <TabsTrigger 
+            value="email"
+            className="flex items-center gap-2 data-[state=active]:bg-accent-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:scale-105 transition-all duration-200"
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            Email Logs
+          </TabsTrigger>
+          <TabsTrigger 
+            value="webapi"
+            className="flex items-center gap-2 data-[state=active]:bg-accent-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:scale-105 transition-all duration-200"
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+            Web API Logs
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="sms">
           {loadingSms ? <div>Loading...</div> : <SmsLogsTable />}

@@ -99,25 +99,71 @@ export default function StaffPortal() {
       </div>
       <div className="grid grid-cols-5 w-full h-7/8">
         <div className="col-span-1 h-full border-r-2 border-white border-solid">
-        <div className="flex flex-col h-full justify-evenly items-center">
+          <div className="flex flex-col h-full justify-evenly items-center">
             <Button 
               variant="secondary" 
               className={cn(
-                activeTab === 1 ? 'active' : '',
-                'w-1/2'
+                activeTab === 1 ? 'bg-accent-blue text-white shadow-lg' : '',
+                'w-1/2',
+                'hover:scale-105 hover:shadow-xl',
+                'transition-all duration-200',
+                'border border-white/20',
+                'relative',
+                'after:absolute after:w-full after:h-full after:bg-white/5',
+                'after:opacity-0 hover:after:opacity-100',
+                'after:transition-opacity after:duration-200',
+                'flex items-center gap-2'
               )}
               onClick={() => setActiveTab(1)}
             >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="20" 
+                height="20" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
               Messenger Dashboard
             </Button>
             <Button 
               variant="secondary" 
               className={cn(
-                activeTab === 2 ? 'active' : '',
-                'w-1/2'
+                activeTab === 2 ? 'bg-accent-blue text-white shadow-lg' : '',
+                'w-1/2',
+                'hover:scale-105 hover:shadow-xl',
+                'transition-all duration-200',
+                'border border-white/20',
+                'relative',
+                'after:absolute after:w-full after:h-full after:bg-white/5',
+                'after:opacity-0 hover:after:opacity-100',
+                'after:transition-opacity after:duration-200',
+                'flex items-center gap-2'
               )}
               onClick={() => setActiveTab(2)}
             >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="20" 
+                height="20" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <path d="M14 2v6h6"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <line x1="10" y1="9" x2="8" y2="9"/>
+              </svg>
               Messages Log
             </Button>
           </div>

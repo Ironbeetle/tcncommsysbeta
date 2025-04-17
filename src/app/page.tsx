@@ -98,13 +98,16 @@ export default function Page() {
                 "border border-white/10",
                 "text-text-light",
                 "focus:outline-none focus:ring-2 focus:ring-accent-blue",
-                "disabled:opacity-50 disabled:cursor-not-allowed"
+                "disabled:opacity-50 disabled:cursor-not-allowed",
+                "[&_option]:bg-deep-blue [&_option]:text-text-light",
+                "[&_option:hover]:bg-accent-blue [&_option:hover]:text-text-light",
+                "[&_option:checked]:bg-accent-blue [&_option:checked]:text-text-light"
               )}
               disabled={isPending}
             >
-              <option value="">Select department</option>
-              <option value="admin">Admin</option>
-              <option value="staff">Staff</option>
+              <option value="" className="text-text-light">Select department</option>
+              <option value="admin" className="text-text-light">Admin</option>
+              <option value="staff" className="text-text-light">Staff</option>
             </select>
           </div>
 
