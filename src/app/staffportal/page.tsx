@@ -99,7 +99,7 @@ export default function StaffPortal() {
       </div>
       <div className="grid grid-cols-5 w-full h-7/8">
         <div className="col-span-1 h-full border-r-2 border-white border-solid">
-          <div className="flex flex-col h-full justify-evenly items-center">
+          <div className="flex flex-col h-48 justify-center items-center gap-4 sticky top-32">
             <Button 
               variant="secondary" 
               className={cn(
@@ -169,7 +169,7 @@ export default function StaffPortal() {
           </div>
         </div>
         <div className="col-span-4 h-full">
-          <div className="flex flex-col justify-center items-center h-full overflow-y-hidden">
+          <div className="flex flex-col justify-evenly items-center h-full overflow-y-auto">
             {activeTab === 1 && <StaffMessenger/>}
             {activeTab === 2 && <MessageLogs/>}
           </div>

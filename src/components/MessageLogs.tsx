@@ -18,6 +18,16 @@ interface LogEntry {
   message: string;
   status: string;
   error?: string | null;
+  user: {
+    first_name: string;
+    last_name: string;
+  };
+  recipientDetails: {
+    first_name: string;
+    last_name: string;
+    contact_number?: string;
+    email?: string;
+  }[];
 }
 
 interface SmsLogEntry extends LogEntry {
@@ -34,7 +44,9 @@ interface EmailLogEntry extends LogEntry {
 
 interface WebApiLogEntry extends LogEntry {
   type: string;
-  subject?: string | null;
+  title: string;
+  content: string;
+  priority: string;
 }
 
 export default function MessageLogs() {
@@ -56,11 +68,19 @@ export default function MessageLogs() {
     },
   });
 
-  const { data: webApiLogs, isLoading: loadingWebApi } = useQuery({
+  const { data: webApiLogs, isLoading: loadingWebApi, error: webApiError } = useQuery({
     queryKey: ["webApiLogs"],
     queryFn: async () => {
       const response = await fetch("/api/logs/webapi");
-      return response.json();
+      if (!response.ok) {
+        throw new Error("Failed to fetch web API logs");
+      }
+      const data = await response.json();
+      if (!Array.isArray(data)) {
+        console.error("Unexpected API response:", data);
+        return [];
+      }
+      return data;
     },
   });
 
@@ -69,6 +89,7 @@ export default function MessageLogs() {
       <TableHeader>
         <TableRow>
           <TableHead>Date</TableHead>
+          <TableHead>Sender</TableHead>
           <TableHead>Message</TableHead>
           <TableHead>Recipients</TableHead>
           <TableHead>Status</TableHead>
@@ -76,11 +97,20 @@ export default function MessageLogs() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {smsLogs?.map((log: SmsLogEntry) => (
+        {smsLogs?.map((log: LogEntry) => (
           <TableRow key={log.id}>
             <TableCell>{format(new Date(log.created), "PPpp")}</TableCell>
+            <TableCell>{`${log.user.first_name} ${log.user.last_name}`}</TableCell>
             <TableCell className="max-w-md truncate">{log.message}</TableCell>
-            <TableCell>{log.recipients.length}</TableCell>
+            <TableCell>
+              <div className="max-h-20 overflow-y-auto">
+                {log.recipientDetails.map((recipient, index) => (
+                  <div key={index} className="text-sm">
+                    {`${recipient.first_name} ${recipient.last_name}`}
+                  </div>
+                ))}
+              </div>
+            </TableCell>
             <TableCell>{log.status}</TableCell>
             <TableCell className="text-red-500">{log.error || "-"}</TableCell>
           </TableRow>
@@ -94,6 +124,7 @@ export default function MessageLogs() {
       <TableHeader>
         <TableRow>
           <TableHead>Date</TableHead>
+          <TableHead>Sender</TableHead>
           <TableHead>Subject</TableHead>
           <TableHead>Recipients</TableHead>
           <TableHead>Attachments</TableHead>
@@ -102,13 +133,22 @@ export default function MessageLogs() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {emailLogs?.map((log: EmailLogEntry) => (
+        {emailLogs?.map((log: LogEntry) => (
           <TableRow key={log.id}>
             <TableCell>{format(new Date(log.created), "PPpp")}</TableCell>
-            <TableCell className="max-w-md truncate">{log.subject}</TableCell>
-            <TableCell>{log.recipients.length}</TableCell>
+            <TableCell>{`${log.user.first_name} ${log.user.last_name}`}</TableCell>
+            <TableCell className="max-w-md truncate">{(log as EmailLogEntry).subject}</TableCell>
             <TableCell>
-              {log.attachments?.files.length || 0} file(s)
+              <div className="max-h-20 overflow-y-auto">
+                {log.recipientDetails.map((recipient, index) => (
+                  <div key={index} className="text-sm">
+                    {`${recipient.first_name} ${recipient.last_name}`}
+                  </div>
+                ))}
+              </div>
+            </TableCell>
+            <TableCell>
+              {((log as EmailLogEntry).attachments?.files.length) || 0} file(s)
             </TableCell>
             <TableCell>{log.status}</TableCell>
             <TableCell className="text-red-500">{log.error || "-"}</TableCell>
@@ -118,33 +158,41 @@ export default function MessageLogs() {
     </Table>
   );
 
-  const WebApiLogsTable = () => (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Date</TableHead>
-          <TableHead>Type</TableHead>
-          <TableHead>Subject</TableHead>
-          <TableHead>Message</TableHead>
-          <TableHead>Status</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {webApiLogs?.map((log: WebApiLogEntry) => (
-          <TableRow key={log.id}>
-            <TableCell>{format(new Date(log.created), "PPpp")}</TableCell>
-            <TableCell>{log.type}</TableCell>
-            <TableCell>{log.subject || "-"}</TableCell>
-            <TableCell className="max-w-md truncate">{log.message}</TableCell>
-            <TableCell>{log.status}</TableCell>
+  const WebApiLogsTable = () => {
+    if (!Array.isArray(webApiLogs)) {
+      return <div>No logs available</div>;
+    }
+
+    return (
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Date</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Subject</TableHead>
+            <TableHead>Message</TableHead>
+            <TableHead>Priority</TableHead>
+            <TableHead>Status</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
+        </TableHeader>
+        <TableBody>
+          {webApiLogs.map((log: WebApiLogEntry) => (
+            <TableRow key={log.id}>
+              <TableCell>{format(new Date(log.created), "PPpp")}</TableCell>
+              <TableCell>{log.type}</TableCell>
+              <TableCell>{log.title || "-"}</TableCell>
+              <TableCell className="max-w-md truncate">{log.content}</TableCell>
+              <TableCell>{log.priority}</TableCell>
+              <TableCell>{log.status || "pending"}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
+  };
 
   return (
-    <div className="w-full p-4">
+    <div className="w-full h-full p-4">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full justify-start gap-2 bg-background/50 p-1">
           <TabsTrigger 
@@ -213,7 +261,13 @@ export default function MessageLogs() {
           {loadingEmail ? <div>Loading...</div> : <EmailLogsTable />}
         </TabsContent>
         <TabsContent value="webapi">
-          {loadingWebApi ? <div>Loading...</div> : <WebApiLogsTable />}
+          {loadingWebApi ? (
+            <div>Loading...</div>
+          ) : webApiError ? (
+            <div className="text-red-500">Error loading logs: {webApiError.message}</div>
+          ) : (
+            <WebApiLogsTable />
+          )}
         </TabsContent>
       </Tabs>
     </div>

@@ -65,7 +65,6 @@ model User {
 
   @@schema("msgmanager")
 }
-
 model Session {
   id           String   @id @default(uuid())
   sessionToken String   @unique
@@ -76,7 +75,6 @@ model Session {
 
   @@schema("msgmanager")
 }
-
 model SmsLog {
   id         String   @id @default(uuid())
   created    DateTime @default(now())
@@ -90,7 +88,6 @@ model SmsLog {
 
   @@schema("msgmanager")
 }
-
 model EmailLog {
   id          String   @id @default(uuid())
   created     DateTime @default(now())
@@ -106,7 +103,6 @@ model EmailLog {
 
   @@schema("msgmanager")
 }
-
 model MsgApiLog {
   id          String    @id
   title       String

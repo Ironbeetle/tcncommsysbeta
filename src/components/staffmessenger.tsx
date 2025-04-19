@@ -27,6 +27,13 @@ export const SMSComposer = ({ selectedRecipients, handleRemoveMember }: { select
         error?: string;
     }>({});
 
+    const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const newMessage = e.target.value;
+        if (newMessage.length <= 160) {
+            setMessage(newMessage);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSending(true);
@@ -92,13 +99,17 @@ export const SMSComposer = ({ selectedRecipients, handleRemoveMember }: { select
                     </label>
                     <textarea
                         value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        onChange={handleMessageChange}
                         rows={4}
-                        className="w-full rounded-md border border-gray-300 p-2"
+                        className={`w-full rounded-md border ${
+                            message.length === 160 ? 'border-yellow-500' : 'border-gray-300'
+                        } p-2`}
                         placeholder="Type your SMS message here..."
                         maxLength={160}
                     />
-                    <div className="text-right text-sm text-gray-400">
+                    <div className={`text-right text-sm ${
+                        message.length === 160 ? 'text-yellow-500' : 'text-gray-400'
+                    }`}>
                         {message.length}/160 characters
                     </div>
                 </div>
@@ -382,25 +393,6 @@ export default function StaffMessenger() {
                                     <polyline points="22,6 12,13 2,6"/>
                                 </svg>
                                 Email
-                            </TabsTrigger>
-                            <TabsTrigger 
-                                value="webapi"
-                                className="flex items-center gap-2 data-[state=active]:bg-accent-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:scale-105 transition-all duration-200"
-                            >
-                                <svg 
-                                    xmlns="http://www.w3.org/2000/svg" 
-                                    width="16" 
-                                    height="16" 
-                                    viewBox="0 0 24 24" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    strokeWidth="2" 
-                                    strokeLinecap="round" 
-                                    strokeLinejoin="round"
-                                >
-                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-                                </svg>
-                                Web API Messages
                             </TabsTrigger>
                         </TabsList>
                         <TabsContent value="sms">

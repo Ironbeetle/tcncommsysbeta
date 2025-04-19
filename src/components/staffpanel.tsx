@@ -17,6 +17,7 @@ interface AppMessage {
     content: string;
     priority: 'low' | 'medium' | 'high';
     expiryDate?: string;
+    type: 'web' | 'sms' | 'email';
     isPublished: boolean;
 }
 
@@ -26,21 +27,17 @@ const WebAPIMessageComposer = () => {
         title: '',
         content: '',
         priority: 'low',
+        type: 'web',
         isPublished: false
     });
     const [isSending, setIsSending] = useState(false);
-    const [sendingStatus, setSendingStatus] = useState<{
-        success?: string;
-        error?: string;
-    }>({});
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSending(true);
-        setSendingStatus({});
 
         try {
-            const response = await fetch('/api/app-messages', {
+            const response = await fetch('/api/messages', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,15 +52,20 @@ const WebAPIMessageComposer = () => {
             }
 
             toast.success('Message published successfully');
+            console.log('Published message:', data.message);
+            
+            // Reset form
             setMessage({
                 title: '',
                 content: '',
                 priority: 'low',
+                type: 'web',
                 isPublished: false
             });
 
         } catch (error: any) {
             toast.error(error.message || 'Failed to publish message');
+            console.error('Error publishing message:', error);
         } finally {
             setIsSending(false);
         }
@@ -150,9 +152,9 @@ const WebAPIMessageComposer = () => {
                                 title: '',
                                 content: '',
                                 priority: 'low',
+                                type: 'web',
                                 isPublished: false
                             });
-                            setSendingStatus({});
                         }}
                     >
                         Clear
